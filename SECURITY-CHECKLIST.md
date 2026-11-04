@@ -1,0 +1,15 @@
+# Production security checklist
+- [ ] Replace all example secrets; keep secrets in a secret manager/KMS, not Git.
+- [ ] Enforce HTTPS/TLS at the public ingress; set secure cookies if cookie auth is adopted.
+- [ ] Restrict registration; provision staff through verified HR/admin workflow.
+- [ ] Add MFA, session revocation, password reset, lockout and account recovery workflows.
+- [ ] Add per-hospital/ward authorization checks to every patient query (current starter RBAC is role-level only).
+- [ ] Configure PostgreSQL disk/volume encryption and encrypted off-site backups; test restores.
+- [ ] Use KMS/HSM-managed envelope encryption and rotation for AES field keys.
+- [ ] Complete threat modeling, penetration testing, dependency scanning and security review.
+- [ ] Add immutable external audit-log export and monitoring.
+- [ ] Add rate limits to all sensitive endpoints and strict CORS allowlist.
+- [ ] Validate all clinical workflows with qualified nurses and clinicians; configure approved alert thresholds.
+- [ ] Implement complete PDF/reporting, real-time updates, mobile clients, MFA, and operational monitoring.
+- [ ] Complete applicable Pakistan and other deployment-jurisdiction privacy, health-data and cybersecurity compliance reviews.
+- [ ] Use fictional data until formal approval.

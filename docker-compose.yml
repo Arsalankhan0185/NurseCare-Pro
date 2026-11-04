@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nursecare}
+      POSTGRES_USER: ${POSTGRES_USER:-nursecare}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nursecare} -d ${POSTGRES_DB:-nursecare}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+  api:
+    build: ./server
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-nursecare}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-nursecare}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY:?Set FIELD_ENCRYPTION_KEY in .env}
+      PORT: 3000
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  web:
+    build: ./client
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+volumes:
+  pgdata:
